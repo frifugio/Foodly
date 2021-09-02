@@ -3,21 +3,25 @@
 @inject HttpClient Http
 @using Foodly.Shared
 
-<h1>Weather forecast</h1>
+<h1>Foodly</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
-
-@if (foods == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    @foreach (var food in foods)
+<div class="container">
+    @if (foods == null)
     {
-        <FoodRow Food="food" />
+        <p><em>Loading...</em></p>
     }
-}
+    else
+    {
+        @foreach (var food in foods)
+        {
+            <FoodRow Food="food" />
+        }
+    }
+
+    <button class="btn-success" @onclick="SaveFoods">Salva</button>
+
+    <NavLink class="btn btn-primary" href="addfood">Aggiungi</NavLink>
+</div>
 
 @code {
     private Food[] foods;
@@ -25,5 +29,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         foods = await Http.GetFromJsonAsync<Food[]>("/api/GetAllFoods");
+    }
+
+    private async void SaveFoods()
+    {
+        foreach (var food in foods)
+        {
+            await Http.PutAsJsonAsync<Food>($"/api/UpdateFood/{food.Id}", food);
+        }
     }
 }

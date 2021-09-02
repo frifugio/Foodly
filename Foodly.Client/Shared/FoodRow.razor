@@ -1,37 +1,19 @@
-﻿@using Foodly.Shared
-
-<div class="d-inline-block">
+﻿<div>
     <p>@Food.Name</p>
 
     <table>
         <tr>
-            @{ int actualCount = Food.ActualQuantity; }
-
-            @for (int i = 0; i < Food.MaxQuantity; i++)
-            {
-                <td>
-                    @if (actualCount-- > 0)
-                    {
-                        <input type="checkbox" checked />
-                    }
-                    else
-                    {
-                        <input type="checkbox" />
-                    }
-                </td>
+            @{
+                int actualCount = Food.ActualQuantity;
             }
-            @for (int i = 0; i < Food.OptionalQuantity; i++)
+
+            @for (int i = 0; i < Food.MaxQuantity + Food.OptionalQuantity; i++)
             {
                 <td>
-                    @if (actualCount-- > 0)
-                    {
-                        <input class="optional-check" type="checkbox" checked />
-                    }
-                    else
-                    {
-                        <input class="optional-check" type="checkbox" />
-                    }
+                    <input class="@((i >= Food.MaxQuantity) ? "optional-check" : "")" type="checkbox" checked="@((actualCount > 0))" disabled="@((actualCount < 0))" @onchange="eventArgs => { ChangeQty(i, eventArgs.Value); }" />
                 </td>
+
+                actualCount--;
             }
         </tr>
     </table>
@@ -42,4 +24,11 @@
     [Parameter]
     public Food Food { get; set; }
 
+    private void ChangeQty(int checkNumber, object checkedValue)
+    {
+        if ((bool)checkedValue)
+            Food.ActualQuantity++;
+        else
+            Food.ActualQuantity--;
+    }
 }

@@ -39,7 +39,7 @@ namespace Foodly.Api
             [CosmosDB(
                 databaseName: "%MyDatabase%",
                 collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString")]IAsyncCollector<dynamic> foodOut,
+                ConnectionStringSetting = "CosmosDBConnectionString")]IAsyncCollector<Food> foodOut,
             ILogger log)
         {
             
@@ -47,8 +47,8 @@ namespace Foodly.Api
 
             try
             {
-                var result = await foodOut.AddAsync(requestBody as dynamic);
-                //Food data = JsonConvert.DeserializeObject<Food>(requestBody);
+                Food data = JsonConvert.DeserializeObject<Food>(requestBody);
+                await foodOut.AddAsync(data);
 
                 // Add a JSON document to the output container.
                 //var result = await foodOut.AddAsync(new
@@ -58,11 +58,13 @@ namespace Foodly.Api
                 //    // altri campi
                 //});
 
-                return new CreatedResult("", result);
+                var databaseName = Environment.GetEnvironmentVariable("MyDatabase");
+                var containerName = Environment.GetEnvironmentVariable("MyContainer");
+                return new CreatedResult(UriFactory.CreateDocumentUri(databaseName, containerName, data.Id.ToString()), data);
             }
             catch
             {
-                return new BadRequestResult();
+                return new StatusCodeResult(500);
             }
         }
 
@@ -74,7 +76,7 @@ namespace Foodly.Api
                 databaseName: "%MyDatabase%",
                 collectionName: "%MyContainer%",
                 ConnectionStringSetting = "CosmosDBConnectionString",
-                Id = "{id}")]IAsyncCollector<dynamic> foodOut,
+                Id = "{id}")]IAsyncCollector<Food> foodOut,
             ILogger log)
         {
             
@@ -82,22 +84,16 @@ namespace Foodly.Api
 
             try
             {
-                var result = await foodOut.AddAsync(requestBody as dynamic);
-                //Food data = JsonConvert.DeserializeObject<Food>(requestBody);
+                Food data = JsonConvert.DeserializeObject<Food>(requestBody);
+                await foodOut.AddAsync(data);
 
-                // Add a JSON document to the output container.
-                //var result = await foodOut.AddAsync(new
-                //{
-                //    // create a random ID
-                //    id = System.Guid.NewGuid().ToString(),
-                //    // altri campi
-                //});
-
-                return new CreatedResult(UriFactory.CreateDocumentUri("%MyDatabase%", "%MyContainer%", result.id), result.id);
+                var databaseName = Environment.GetEnvironmentVariable("MyDatabase");
+                var containerName = Environment.GetEnvironmentVariable("MyContainer");
+                return new OkObjectResult(data);
             }
             catch
             {
-                return new BadRequestResult();
+                return new StatusCodeResult(500);
             }
         }
 
