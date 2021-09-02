@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodly.Client", "Foodly.Client\Foodly.Client.csproj", "{7E39C2FA-349B-48DA-9B09-68767F9A7879}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodly.Client", "Foodly.Client\Foodly.Client.csproj", "{7E39C2FA-349B-48DA-9B09-68767F9A7879}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodly.Api", "Foodly.Api\Foodly.Api.csproj", "{8A6BB1AE-B0B4-4DA4-A619-6D69883CC968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodly.Api", "Foodly.Api\Foodly.Api.csproj", "{8A6BB1AE-B0B4-4DA4-A619-6D69883CC968}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodly.Shared", "Foodly.Shared\Foodly.Shared.csproj", "{1C139ED8-05C0-4EA7-AC53-F76E2278EBBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foodly.Shared", "Foodly.Shared\Foodly.Shared.csproj", "{1C139ED8-05C0-4EA7-AC53-F76E2278EBBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
