@@ -395,21 +395,21 @@ label .was-validated .form-check-input:invalid .abc-checkbox:before, label
 }
 
 .abc-checkbox.abc-checkbox-md label::before {
-    width: 34px;
-    height: 34px;
-    top: -17px;
+    width: 38px;
+    height: 38px;
+    top: -19px;
 }
 
 .abc-checkbox.abc-checkbox-md label::after {
-    width: 34px;
-    height: 34px;
-    padding-left: 4px;
+    width: 38px;
+    height: 38px;
+    padding-left: 6px;
     font-size: 24px;
     left: 1px;
-    top: -18px;
+    top: -20px;
 }
 
 .abc-checkbox.abc-checkbox-md label {
-    padding-left: 22px;
+    padding-left: 24px;
     top: 17px;
 }

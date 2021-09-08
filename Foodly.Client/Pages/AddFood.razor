@@ -2,41 +2,41 @@
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
-    <div class="container">
-        <h3>Aggiungi alimento</h3>
+<div class="container">
+    <h3>Aggiungi alimento</h3>
 
-        <EditForm Model="@newFood" OnValidSubmit="OnValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+    <EditForm Model="@newFood" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            <div class="form-group">
-                <label for="Name">Nome</label>
-                <InputText @bind-Value=newFood.Name class="form-control" id="Name" />
-            </div>
-            <div class="form-group">
-                <label for="MaxQuantity">Qtà massima</label>
-                <InputNumber @bind-Value=newFood.MaxQuantity class="form-control" id="MaxQuantity" />
-            </div>
-            <div class="form-group">
-                <label for="OptionalQuantity">Qtà opzionale <small>(in aggiunta alla quantità massima)</small></label>
-                <InputNumber @bind-Value=newFood.OptionalQuantity class="form-control" id="OptionalQuantity" />
-            </div>
+        <div class="form-group">
+            <label for="Name">Nome</label>
+            <InputText @bind-Value=newFood.Name class="form-control" id="Name" />
+        </div>
+        <div class="form-group">
+            <label for="MaxQuantity">Qtà massima</label>
+            <InputNumber @bind-Value=newFood.MaxQuantity class="form-control" id="MaxQuantity" />
+        </div>
+        <div class="form-group">
+            <label for="OptionalQuantity">Qtà opzionale <small>(in aggiunta alla quantità massima)</small></label>
+            <InputNumber @bind-Value=newFood.OptionalQuantity class="form-control" id="OptionalQuantity" />
+        </div>
 
-            <input type="submit" class="btn btn-primary" value="Save" />
-        </EditForm>
-    </div>
+        <input type="submit" class="btn btn-primary" value="Save" />
+    </EditForm>
+</div>
 
-    @code {
-        Food newFood = new Food()
-        {
-            Id = Guid.NewGuid(),
-            ActualQuantity = 0
-        };
+@code {
+    Food newFood = new Food()
+    {
+        Id = Guid.NewGuid(),
+        ActualQuantity = 0
+    };
 
-        private async void OnValidSubmit(EditContext editContext)
-        {
-            await Http.PostAsJsonAsync<Food>($"/api/AddFood", newFood);
+    private async void OnValidSubmit(EditContext editContext)
+    {
+        await Http.PostAsJsonAsync<Food>($"/api/AddFood", newFood);
 
-            NavManager.NavigateTo("/", true);
-        }
+        NavManager.NavigateTo("/", true);
     }
+}
