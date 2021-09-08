@@ -20,5 +20,8 @@ namespace Foodly.Shared
         [JsonProperty("optionalQuantity")]
         [Range(0,14)]
         public int OptionalQuantity { get; set; }
+        [JsonProperty("overQuantity")]
+        [Range(0,14)]
+        public int OverQuantity { get; set; }
     }
 }

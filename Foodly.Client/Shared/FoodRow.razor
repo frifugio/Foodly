@@ -1,21 +1,34 @@
 ﻿<div>
     <p>@Food.Name</p>
 
-    <table>
-        <tr>
-            @{
-                int actualCount = Food.ActualQuantity;
-            }
+    <table class="table table-hover">
+        <tbody>
+            <tr>
+                @{
+                    int actualCount = Food.ActualQuantity;
+                }
 
-            @for (int i = 0; i < Food.MaxQuantity + Food.OptionalQuantity; i++)
-            {
-                <td>
-                    <input class="@((i >= Food.MaxQuantity) ? "optional-check" : "")" type="checkbox" checked="@((actualCount > 0))" disabled="@((actualCount < 0))" @onchange="eventArgs => { ChangeQty(i, eventArgs.Value); }" />
-                </td>
+                @for (int i = 0; i < Food.MaxQuantity + Food.OptionalQuantity + Food.OverQuantity; i++)
+                {
+                    string checkClass = "abc-checkbox-success";
+                    if ((i >= Food.MaxQuantity && i < Food.MaxQuantity + Food.OptionalQuantity)) checkClass = "abc-checkbox-warning";
+                    else if ((i >= Food.MaxQuantity + Food.OptionalQuantity)) checkClass = "abc-checkbox-danger";
 
-                actualCount--;
-            }
-        </tr>
+                    string checkGuid = Guid.NewGuid().ToString();
+
+                    <td>
+                        <div class="form-check abc-checkbox form-check-inline abc-checkbox-md @checkClass">
+                            <input class="form-check-input" id="check-@checkGuid"
+                                   type="checkbox" checked="@((actualCount > 0))" disabled="@((actualCount < 0))" @onchange="eventArgs => { ChangeQty(i, eventArgs.Value); }" />
+                            <label for="check-@checkGuid"></label>
+                        </div>
+                    </td>
+
+                    actualCount--;
+                }
+                <td><button class="btn btn-success" @onclick="() => Food.OverQuantity++">+</button></td>
+            </tr>
+        </tbody>
     </table>
 </div>
 
@@ -32,3 +45,50 @@
             Food.ActualQuantity--;
     }
 }
+
+@*<div>
+    <p>@Food.Name</p>
+
+    <table class="table table-hover">
+        <tbody>
+            <tr>
+                @{
+                    int actualCount = Food.ActualQuantity;
+                }
+
+                @for (int i = 0; i < Food.MaxQuantity + Food.OptionalQuantity + Food.OverQuantity; i++)
+                {
+                    string checkClass = "custom-input-green";
+                    if ((i >= Food.MaxQuantity && i < Food.MaxQuantity + Food.OptionalQuantity)) checkClass = "custom-input-yellow";
+                    else if ((i >= Food.MaxQuantity + Food.OptionalQuantity)) checkClass = "custom-input-red";
+
+                    <td>
+                        <div class="custom-control custom-checkbox">
+                            <input class="checkbox custom-control-input @checkClass" id="check-@actualCount"
+                                   type="checkbox" checked="@((actualCount > 0))" disabled="@((actualCount < 0))" @onchange="eventArgs => { ChangeQty(i, eventArgs.Value); }" />
+                            <label class="custom-control-label" for="check-@actualCount"></label>
+                        </div>
+                    </td>
+
+                    actualCount--;
+                }
+                <td><button class="btn btn-success" @onclick="() => Food.OverQuantity++">+</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    [Parameter]
+    public Food Food { get; set; }
+
+    private void ChangeQty(int checkNumber, object checkedValue)
+    {
+        if ((bool)checkedValue)
+            Food.ActualQuantity++;
+        else
+            Food.ActualQuantity--;
+    }
+}*@
+

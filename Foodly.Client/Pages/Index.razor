@@ -3,9 +3,9 @@
 @inject HttpClient Http
 @using Foodly.Shared
 
-<h1>Foodly</h1>
-
 <div class="container">
+    <h1>Foodly</h1>
+
     @if (foods == null)
     {
         <p><em>Loading...</em></p>
@@ -18,7 +18,7 @@
         }
     }
 
-    <button class="btn-success" @onclick="SaveFoods">Salva</button>
+    <button class="btn btn-success" @onclick="SaveFoods">Salva</button>
 
     <NavLink class="btn btn-primary" href="addfood">Aggiungi</NavLink>
 </div>
