@@ -4,7 +4,10 @@
 @using Foodly.Shared
 
 <div class="container">
-    <h1>Foodly</h1>
+    <h1 class="mt-4 mb-5">Foodly</h1>
+    <blockquote class="blockquote">
+        <footer class="blockquote-footer">Settimana n° @System.Globalization.ISOWeek.GetWeekOfYear(DateTime.Today)</footer>
+    </blockquote>
 
     @if (foods == null)
     {
@@ -23,11 +26,14 @@
                 </tbody>
             </table>
         </div>
+
+        <button class="btn btn-success" @onclick="SaveFoods">Salva</button>
     }
 
-    <button class="btn btn-success" @onclick="SaveFoods">Salva</button>
-
-    <NavLink class="btn btn-primary" href="addfood">Aggiungi</NavLink>
+    <div class="mt-4">
+        <NavLink class="btn btn-primary" href="addfood">Aggiungi</NavLink>
+        <button class="btn btn-success ml-1" @onclick="ResetAllQuantity">Reset</button>
+    </div>
 </div>
 
 @code {
@@ -42,6 +48,17 @@
     {
         foreach (var food in foods)
         {
+            await Http.PutAsJsonAsync<Food>($"/api/UpdateFood/{food.Id}", food);
+        }
+    }
+
+    private async void ResetAllQuantity()
+    {
+        foreach (var food in foods)
+        {
+            food.ActualQuantity = 0;
+            food.OverQuantity = 0;
+
             await Http.PutAsJsonAsync<Food>($"/api/UpdateFood/{food.Id}", food);
         }
     }
