@@ -1,5 +1,5 @@
 ﻿<tr>
-    <th scope="row">
+    <th scope="row" style="min-width: 150px">
         <p>@Food.Name</p>
     </th>
 
@@ -15,17 +15,21 @@
 
         string checkGuid = Guid.NewGuid().ToString();
 
-        <td>
-            <div class="form-check abc-checkbox abc-checkbox-md @checkClass">
+        <td style="min-width: 70px">
+            <div class="form-check abc-checkbox checkbox-inline abc-checkbox-md @checkClass">
                 <input class="form-check-input" id="check-@checkGuid"
                        type="checkbox" checked="@((actualCount > 0))" disabled="@((actualCount < 0))" @onchange="eventArgs => { ChangeQty(i, eventArgs.Value); }" />
                 <label for="check-@checkGuid"></label>
             </div>
         </td>
+
         actualCount--;
     }
 
-    <td><button class="btn btn-info" id="btn-addover" @onclick="() => Food.OverQuantity++"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+    @if (Food.ActualQuantity == Food.MaxQuantity + Food.OptionalQuantity + Food.OverQuantity)
+    {
+        <td><button class="btn btn-info ml-n1" id="btn-addover" @onclick="() => Food.OverQuantity++"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+    }
 </tr>
 
 
