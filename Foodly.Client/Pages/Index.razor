@@ -1,7 +1,11 @@
 ﻿@page "/"
 
+@inject IFoodRepository FoodRepository
 @inject HttpClient Http
+@inject NavigationManager NavManager
+
 @using Foodly.Shared
+@using Foodly.Shared.Repositories
 
 <div class="container">
     <h1 class="mt-4">Foodly</h1>
@@ -41,15 +45,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        foods = await Http.GetFromJsonAsync<Food[]>("/api/GetAllFoods");
+        foods = await FoodRepository.GetAllFoodsAsync();
     }
 
     private async void SaveFoods()
     {
         foreach (var food in foods)
         {
-            await Http.PutAsJsonAsync<Food>($"/api/UpdateFood/{food.Id}", food);
+            await FoodRepository.UpdateFoodAsync(food);
         }
+
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
     }
 
     private async void ResetAllQuantity()
@@ -59,7 +65,9 @@
             food.ActualQuantity = 0;
             food.OverQuantity = 0;
 
-            await Http.PutAsJsonAsync<Food>($"/api/UpdateFood/{food.Id}", food);
+            await FoodRepository.UpdateFoodAsync(food);
         }
+
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
     }
 }

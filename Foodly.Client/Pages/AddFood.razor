@@ -1,6 +1,9 @@
 ﻿@page "/AddFood"
+@inject IFoodRepository FoodRepository 
 @inject HttpClient Http
 @inject NavigationManager NavManager
+
+@using Foodly.Shared.Repositories
 
 <div class="container">
     <h3>Aggiungi alimento</h3>
@@ -35,7 +38,7 @@
 
     private async void OnValidSubmit(EditContext editContext)
     {
-        await Http.PostAsJsonAsync<Food>($"/api/AddFood", newFood);
+        await FoodRepository.AddFoodAsync(newFood);
 
         NavManager.NavigateTo("/", true);
     }

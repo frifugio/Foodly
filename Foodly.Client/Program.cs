@@ -1,11 +1,8 @@
+using Foodly.Shared.Repositories;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Foodly.Client
@@ -19,6 +16,15 @@ namespace Foodly.Client
 
             var baseAddress = builder.Configuration["BaseAddress"] ?? builder.HostEnvironment.BaseAddress;
             builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(baseAddress) });
+
+            if (builder.HostEnvironment.IsDevelopment())
+            {
+                builder.Services.AddScoped<IFoodRepository, MockFoodRepository>();
+            }
+            else
+            {
+                builder.Services.AddScoped<IFoodRepository, FoodRepository>();
+            }
 
             await builder.Build().RunAsync();
         }
