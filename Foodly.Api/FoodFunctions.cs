@@ -1,48 +1,51 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Foodly.Shared;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Foodly.Shared;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents;
-using System.Linq;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Foodly.Api
 {
-    public static class FoodFunctions
+    public class FoodFunctions
     {
-        [FunctionName("GetAllFoods")]
+        private readonly ILogger<FoodFunctions> _logger;
+        public FoodFunctions(ILogger<FoodFunctions> logger)
+        {
+            _logger = logger;
+        }
+
+        [Function("GetAllFoods")]
         public static IActionResult GetAllFoods(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "GetAllFoods")]
             HttpRequest req,
-            [CosmosDB(
+            [CosmosDBInput(
                 databaseName: "%MyDatabase%",
-                collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString",
-                SqlQuery = "SELECT * FROM c")]
-                IEnumerable<Food> foodList, ILogger log)
+                containerName: "%MyContainer%",
+                Connection = "CosmosDBConnectionString")]
+            IReadOnlyCollection<Food> foodList)
         {
             return new OkObjectResult(foodList);
         }
 
 
-        [FunctionName("AddFood")]
-        public async static Task<IActionResult> AddFood(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+        [Function("AddFood")]
+        public static async Task<IActionResult> AddFood(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "AddFood")]
             HttpRequest req,
-            [CosmosDB(
+            [CosmosDBInput(
                 databaseName: "%MyDatabase%",
-                collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString")]IAsyncCollector<Food> foodOut,
-            ILogger log)
+                containerName: "%MyContainer%",
+                Connection = "CosmosDBConnectionString")]
+            IAsyncCollector<Food> foodOut
+            )
         {
-            
+
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
             try
@@ -60,7 +63,7 @@ namespace Foodly.Api
 
                 var databaseName = Environment.GetEnvironmentVariable("MyDatabase");
                 var containerName = Environment.GetEnvironmentVariable("MyContainer");
-                return new CreatedResult(UriFactory.CreateDocumentUri(databaseName, containerName, data.Id.ToString()), data);
+                return new OkResult();
             }
             catch
             {
@@ -68,18 +71,19 @@ namespace Foodly.Api
             }
         }
 
-        [FunctionName("UpdateFood")]
-        public async static Task<IActionResult> UpdateFood(
+        [Function("UpdateFood")]
+        public static async Task<IActionResult> UpdateFood(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateFood/{id}")]
             HttpRequest req,
-            [CosmosDB(
-                databaseName: "%MyDatabase%",
-                collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString",
-                Id = "{id}")]IAsyncCollector<Food> foodOut,
-            ILogger log)
+            [CosmosDBInput(
+                    databaseName: "%MyDatabase%",
+                    containerName: "%MyContainer%",
+                    Connection = "CosmosDBConnectionString",
+                    Id = "{id}")]
+            IAsyncCollector<Food> foodOut
+            )
         {
-            
+
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
             try
@@ -97,39 +101,30 @@ namespace Foodly.Api
             }
         }
 
-        [FunctionName("DeleteFood")]
-        public static async Task<IActionResult> DeleteFood(
-            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "DeleteFood/{id}")]
-            HttpRequest request,
-            [CosmosDB(
-                databaseName: "%MyDatabase%",
-                collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString",
-                SqlQuery = "SELECT * FROM c WHERE c.id = {id}")]
-            IEnumerable<Food> foods,
-            [CosmosDB(
-                databaseName: "%MyDatabase%",
-                collectionName: "%MyContainer%",
-                ConnectionStringSetting = "CosmosDBConnectionString")]
-            DocumentClient documentClient,
-            string id,
-            ILogger log)
-        {
-            if (foods == null || !foods.Any())
-            {
-                return new NotFoundResult();
-            }
+        //[Function("DeleteFood")]
+        //public async Task<IActionResult> DeleteFood(
+        //    [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "DeleteFood/{id}")]
+        //    [CosmosDBInput(
+        //        databaseName: "%MyDatabase%",
+        //        containerName: "%MyContainer%",
+        //        Connection = "CosmosDBConnectionString",
+        //        SqlQuery = "SELECT * FROM c WHERE c.id = {id}")]
+        //    IEnumerable<Food> foods,
+        //    CosmosClient cosmosClient,
+        //    string id)
+        //{
+        //    if (foods == null || !foods.Any())
+        //    {
+        //        _logger.LogError($"Food {id} not found. Delete operation impossible");
+        //        return new NotFoundResult();
+        //    }
 
-            var food = foods.First();
-            var uri = UriFactory.CreateDocumentUri("%MyDatabase%", "%MyContainer%", id);
-            var options = new RequestOptions
-            {
-                PartitionKey = new PartitionKey(food.Name)
-            };
+        //    var food = foods.First();
 
-            await documentClient.DeleteDocumentAsync(uri, options);
+        //    Container container = cosmosClient.GetContainer(id, "%MyContainer%");          
+        //    await container.DeleteItemAsync<Food>(id, new PartitionKey(food.Name));
 
-            return new OkResult();
-        }
+        //    return new OkResult();
+        //}
     }
 }

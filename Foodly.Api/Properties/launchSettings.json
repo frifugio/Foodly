@@ -2,7 +2,7 @@
   "profiles": {
     "Api": {
       "commandName": "Project",
-      "commandLineArgs": "start --cors *"
+      "commandLineArgs": "--port 7074 --cors *"
     }
   }
 }
