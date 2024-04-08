@@ -1,6 +1,22 @@
-﻿<tr>
-    <th scope="row" style="min-width: 150px">
-        <p>@Food.Name</p>
+﻿@inject IFoodRepository FoodRepository
+@inject NavigationManager NavManager
+
+@using Foodly.Shared
+@using Foodly.Shared.Repositories
+
+<tr>
+    <th scope="row" style="min-width: 150px" @onclick="ToggleDeleteButton">
+        <div>
+            <p class="d-inline-block mt-2">@Food.Name</p>
+            @if (showDeleteButton && ! showDeleteConfirmationButton) 
+            {
+                <button class="btn btn-danger ml-2 d-inline-block z-index-3"><i class="fa fa-trash-o" aria-hidden="true" @onclick="ShowDeleteConfirmation" @onclick:stopPropagation="true"></i></button>
+            }
+            @if (showDeleteConfirmationButton)
+            {
+                <button class="btn btn-danger ml-2 d-inline-block z-index-3"><i class="fa fa-check-circle-o" aria-hidden="true" @onclick="DeleteFood"></i></button>
+            }
+        </div>
     </th>
 
     @{
@@ -38,11 +54,34 @@
     [Parameter]
     public Food Food { get; set; }
 
+    public bool showDeleteButton = false;
+    public bool showDeleteConfirmationButton = false;
+
     private void ChangeQty(int checkNumber, object checkedValue)
     {
         if ((bool)checkedValue)
             Food.ActualQuantity++;
         else
             Food.ActualQuantity--;
+    }
+
+    private void ToggleDeleteButton()
+    {
+        if (showDeleteConfirmationButton)
+            showDeleteButton = showDeleteConfirmationButton = false;
+        else
+            showDeleteButton = !showDeleteButton;
+    }
+
+    private void ShowDeleteConfirmation()
+    {
+        showDeleteButton = false;
+        showDeleteConfirmationButton = true;
+    }
+
+    private void DeleteFood()
+    {
+        FoodRepository.DeleteFood(Food.Id);
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
     }
 }
