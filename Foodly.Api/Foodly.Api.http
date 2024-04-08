@@ -1,0 +1,38 @@
+﻿@Foodly.Api_HostAddress = http://localhost:7074
+@Foodly.FoodId = {{$guid}}
+@Foodly.FoodRandomName = {{$randomInt}}
+
+POST {{Foodly.Api_HostAddress}}/api/AddFood
+Content-Type: application/json
+
+{
+    "id": "{{Foodly.FoodId}}",
+    "name": "Pasto {{Foodly.FoodRandomName}}",
+    "maxQuantity": 1,
+    "actualQuantity": 0,
+    "optionalQuantity": 0,
+    "overQuantity": 0
+}
+
+###
+
+DELETE {{Foodly.Api_HostAddress}}/api/DeleteFood/{{Foodly.FoodId}}
+
+###
+
+GET {{Foodly.Api_HostAddress}}/api/GetAllFoods
+
+###
+
+PUT {{Foodly.Api_HostAddress}}/api/UpdateFood/{{Foodly.FoodId}}
+Content-Type: application/json
+
+{
+    "id": "{{Foodly.FoodId}}",
+    "name": "Pasto {{Foodly.FoodRandomName}}",
+    "maxQuantity": 100,
+    "actualQuantity": 0,
+    "optionalQuantity": 0,
+    "overQuantity": 0
+}
+###
