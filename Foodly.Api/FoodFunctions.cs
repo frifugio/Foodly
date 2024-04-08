@@ -59,7 +59,7 @@ namespace Foodly.Api
                     item: data,
                     partitionKey: new PartitionKey(data.Name)
                 );
-                string createdItemRoute = $"https://foodly-cosmos.documents.azure.com/dbs/{Environment.GetEnvironmentVariable("MyDatabase")}/docs/{createdItem.Id}";
+                string createdItemRoute = $"https://{Environment.GetEnvironmentVariable("MyCosmosAccount")}/.documents.azure.com/dbs/{Environment.GetEnvironmentVariable("MyDatabase")}/docs/{createdItem.Id}";
                 return new CreatedAtRouteResult(createdItemRoute, createdItem);
             }
             catch (Exception ex)
